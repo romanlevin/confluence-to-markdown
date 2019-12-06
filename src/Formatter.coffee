@@ -31,7 +31,7 @@ class Formatter
   getHtml: ($content) ->
     $ = @_cheerio
     contentHtml = ''
-    $content.each (i, el) =>
+    $content.each (i, el) ->
       contentHtml += $(el).html()
     contentHtml
 
@@ -88,7 +88,7 @@ class Formatter
   fixEmptyLink: ($content) ->
     $ = @_cheerio
     $content
-      .find('a').each (i, el) =>
+      .find('a').each (i, el) ->
         if (
           $(el).text().trim().length == 0 \
           and $(el).find('img').length == 0
@@ -105,7 +105,7 @@ class Formatter
   fixEmptyHeading: ($content) ->
     $ = @_cheerio
     $content
-      .find(':header').each (i, el) =>
+      .find(':header').each (i, el) ->
         if $(el).text().trim().length == 0
           $(el).remove()
       .end()
@@ -119,7 +119,7 @@ class Formatter
   fixPreformattedText: ($content) ->
     $ = @_cheerio
     $content
-      .find('pre').each (i, el) =>
+      .find('pre').each (i, el) ->
         data = $(el).data('syntaxhighlighterParams')
         $(el).attr('style', data)
         styles = $(el).css()
@@ -137,7 +137,7 @@ class Formatter
   fixImageWithinSpan: ($content) ->
     $ = @_cheerio
     $content
-      .find('span:has(img)').each (i, el) =>
+      .find('span:has(img)').each (i, el) ->
         if $(el).text().trim().length == 0
           $(el).replaceWith($(el).html())
       .end()
@@ -230,7 +230,7 @@ class Formatter
   _removeElementLeaveText: ($content, selector) ->
     $ = @_cheerio
     $content
-      .find(selector).each (i, el) =>
+      .find(selector).each (i, el) ->
         $(el).replaceWith $(el).text()
       .end()
 

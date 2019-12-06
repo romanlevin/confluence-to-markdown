@@ -13,16 +13,15 @@ class App
   ]
 
   ###*
-  # @param {fs} _fs Required lib
   # @param {sync-exec} _exec Required lib
   # @param {path} _path Required lib
-  # @param {mkdirp} _mkdirp Required lib
+  # @param {fs} _fs Required lib
   # @param {Utils} utils My lib
   # @param {Formatter} formatter My lib
   # @param {PageFactory} pageFactory My lib
   # @param {Logger} logger My lib
   ###
-  constructor: (@_fs, @_exec, @_path, @_mkdirp, @utils, @formatter, @pageFactory, @logger) ->
+  constructor: (@_exec, @_path, @_fs, @utils, @formatter, @pageFactory, @logger) ->
     typesAdd = App.outputTypesAdd.join '+'
     typesRemove = App.outputTypesRemove.join '-'
     typesRemove = if typesRemove then '-' + typesRemove else ''
@@ -76,16 +75,11 @@ class App
   ###
   writeMarkdownFile: (text, fullOutFileName) ->
     fullOutDirName = @utils.getDirname fullOutFileName
-    @_mkdirp.sync fullOutDirName, (error) ->
-      if error
-        @logger.error 'Unable to create directory #{fullOutDirName}'
+    @_fs.mkdirSync fullOutDirName, recursive: true
 
-    tempInputFile = fullOutFileName + '~'
-    @_fs.writeFileSync tempInputFile, text, flag: 'w'
-    command = 'pandoc -f html #{@pandocOptions} -o "#{fullOutFileName}" "#{tempInputFile}"'
-    out = @_exec command, cwd: fullOutDirName
+    command = 'pandoc -f html #{@pandocOptions} -o "#{fullOutFileName}"'
+    out = @_exec command, cwd: fullOutDirName, input: text
     @logger.error out.stderr if out.status > 0
-    @_fs.unlinkSync tempInputFile
 
 
   ###*

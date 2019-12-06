@@ -13,7 +13,6 @@
   "repository": "git@github.com:meridius/confluence-to-markdown.git",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
-    "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
     "path": "^0.12.7",
     "rimraf": "^2.5.4"
