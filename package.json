@@ -21,5 +21,8 @@
   "scripts": {
     "start": "coffee ./src/index.coffee",
     "build": "coffee --output dist --compile src"
+  },
+  "engines": {
+    "node": ">=13.2.0"
   }
 }
