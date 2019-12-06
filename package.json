@@ -14,8 +14,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "ncp": "^2.0.0",
-    "path": "^0.12.7",
-    "rimraf": "^2.5.4"
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "coffeescript": "^2.4.1"
