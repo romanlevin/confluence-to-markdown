@@ -102,19 +102,19 @@ class Utils
     # relative link to file
     if fileName.endsWith '.html'
       baseName = fileName.replace '.html', '' # gitit requires link to pages without .md extension
-      for page in pages
-        if baseName == page.fileBaseName
-          if space == page.space
-            return page.fileNameNew.replace '.md', '' # gitit requires link to pages without .md extension
-          else
-            return page.spacePath.replace '.md', '' # gitit requires link to pages without .md extension
+      page = pages[baseName]
+      if page
+        if space == page.space
+          return page.fileNameNew.replace '.md', '' # gitit requires link to pages without .md extension
+        else
+          return page.spacePath.replace '.md', '' # gitit requires link to pages without .md extension
 
     # link to confluence pageId
     else if matches = href.match /.*pageId=(\d+).*/
       pageId = matches[1]
-      for page in pages
-        if pageId == page.fileBaseName
-          return page.spacePath.replace '.md', '' # gitit requires link to pages without .md extension
+      page = pages[pageId]
+      if page
+        return page.spacePath.replace '.md', '' # gitit requires link to pages without .md extension
 
     # link outside
     else

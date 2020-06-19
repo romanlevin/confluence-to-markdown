@@ -1,3 +1,5 @@
+$ = require 'cheerio'
+
 class Page
 
 
@@ -22,9 +24,23 @@ class Page
     '../' + @utils.sanitizeFilename(@space) + '/' + @fileNameNew
 
 
+  getDirectory: () ->
+    directory = @content.
+    find('#breadcrumbs').
+    children().
+    filter((index, _) ->
+      index > 1
+    ).
+    map((_, element) ->
+      $(element).text().trim()
+    ).get().join('/')
+    return directory + '/' if directory
+    ''
+
+
   getFileNameNew: () ->
     return 'index.md' if @fileName == 'index.html'
-    @utils.sanitizeFilename(@heading) + '.md'
+    @getDirectory() + @utils.sanitizeFilename(@heading) + '.md'
 
 
   getHeading: () ->

@@ -1,19 +1,9 @@
 class App
 
   # @link http://hackage.haskell.org/package/pandoc For options description
-  @outputTypesAdd = [
-    'gfm' # use GitHub markdown variant
-  ]
-
-  @outputTypesRemove = [
-  ]
-
-  @extraOptions = [
-    '--atx-headers' # Setext-style headers (underlined) | ATX-style headers (prefixed with hashes)
-  ]
 
   ###*
-  # @param {sync-exec} _exec Required lib
+  # @param {child_process.execSync} _exec Required lib
   # @param {path} _path Required lib
   # @param {fs} _fs Required lib
   # @param {Utils} utils My lib
@@ -22,14 +12,6 @@ class App
   # @param {Logger} logger My lib
   ###
   constructor: (@_exec, @_path, @_fs, @utils, @formatter, @pageFactory, @logger) ->
-    typesAdd = App.outputTypesAdd.join '+'
-    typesRemove = App.outputTypesRemove.join '-'
-    typesRemove = if typesRemove then '-' + typesRemove else ''
-    types = typesAdd + typesRemove
-    @pandocOptions = [
-      if types then '-t ' + types else ''
-      App.extraOptions.join ' '
-    ].join ' '
 
 
   ###*
@@ -39,10 +21,13 @@ class App
   ###
   convert: (dirIn, dirOut) ->
     filePaths = @utils.readDirRecursive dirIn
-    pages = (@pageFactory.create filePath for filePath in filePaths when filePath.endsWith '.html')
+    pages = {}
+    for filePath in filePaths when filePath.endsWith '.html'
+      page = @pageFactory.create filePath
+      pages[page.fileBaseName] = page
 
     indexHtmlFiles = []
-    for page in pages
+    for _, page of pages
       do (page) =>
         if page.fileName == 'index.html'
           indexHtmlFiles.push @_path.join page.space, 'index' # gitit requires link to pages without .md extension
@@ -69,7 +54,7 @@ class App
 
 
   ###*
-  # @param {string} text Makdown content of file
+  # @param {string} text Markdown content of file
   # @param {string} fullOutFileName Absolute path to resulting file
   # @return {string} Absolute path to created MD file
   ###
@@ -77,10 +62,11 @@ class App
     fullOutDirName = @utils.getDirname fullOutFileName
     @_fs.mkdirSync fullOutDirName, recursive: true
 
-    command = 'pandoc -f html #{@pandocOptions} -o "#{fullOutFileName}"'
-    out = @_exec command, cwd: fullOutDirName, input: text
-    @logger.error out.stderr if out.status > 0
+    output = @_exec 'pandoc',
+      ['-f', 'html', '-t', 'gfm', '-o', fullOutFileName],
+      input: text
 
+    @logger.info output.stderr.toString() if output.status != 0
 
   ###*
   # @param {array} indexHtmlFiles Relative paths of index.html files from all parsed Confluence spaces

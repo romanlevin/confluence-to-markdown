@@ -18,14 +18,6 @@ class Formatter
 
   ###*
   # @param {cheerio obj} $content Content of a file
-  # @return {string} Textual representation of a content
-  ###
-  getText: ($content) ->
-    $content.text()
-
-
-  ###*
-  # @param {cheerio obj} $content Content of a file
   # @return {string} HTML representation of a content
   ###
   getHtml: ($content) ->
